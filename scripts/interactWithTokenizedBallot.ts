@@ -48,6 +48,8 @@ async function delegate() {
   })
 
   console.log("Transaction hash:", mintTx);
+
+  //hi
 }
 
 async function vote(position: number, amount: number){
