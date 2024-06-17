@@ -4,6 +4,7 @@ dotenv.config();
 import { createPublicClient, http, createWalletClient, formatEther, toHex, hexToString } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { abi, bytecode } from "../artifacts/contracts/JamToken.sol/JamToken.json";
+import { abi as ballotAbi } from "../artifacts/contracts/TokenizedBallot.sol/TokenizedBallot.json";
 
 const providerApiKey = process.env.ALCHEMY_API_KEY || "";
 const interactingWallet = process.env.PRIVATE_KEY || "";
@@ -48,21 +49,42 @@ async function delegate() {
 
   console.log("Transaction hash:", mintTx);
 }
+
+async function vote(position: number, amount: number){
+  // const proposals = ["Cherry", "Strawberry", "Grape"]
+  // const voteSelection = 
+
+const account = privateKeyToAccount(`0x${interactingWallet}`);
+  const interactor = createWalletClient({
+    account,
+    chain: sepolia,
+    transport: http(`https://eth-sepolia.g.alchemy.com/v2/${providerApiKey}`),
+  });
+
+  const mintTx = await interactor.writeContract({
+    address: TOKENIZED_BALLOT_ADDRESS,
+    abi: ballotAbi,
+    functionName: "vote",
+    args: [BigInt(position), BigInt(amount)],
+  })
+
+  console.log("Transaction hash:", mintTx);
+}
 //1. Mint tokens to self
 //2. Mint tokens to Adrian
-//3. Give minting rights to Adrian
-
-//4. Adrian mints token to Andrew
-//5. Check Voting power of each
+//3. Self Delegate (Adrian & Andrew)
 //6. Andrew votes
 //7. Adrian votes
 //8. Check winner
 
-const AMOUNT_TO_SEND = 20000;
+// const AMOUNT_TO_SEND = 20000;
 
 // mintTo(ADRIAN_ADDRESS, AMOUNT_TO_SEND).catch((error) => {
 //   console.error(error);
 //   process.exitCode = 1;
 // });
 
-delegate()
+// delegate()
+
+//ANDREWS VOTE
+vote(2, 5000)
